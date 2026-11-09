@@ -330,6 +330,37 @@ import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/fir
     });
   }
 };
+window.creerPartie = async function () {
+  const pseudo = document.getElementById("pseudo").value.trim();
+
+  if (!pseudo) {
+    alert("Entre ton pseudo !");
+    return;
+  }
+
+  try {
+    await signInAnonymously(auth);
+
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const uid = auth.currentUser.uid;
+
+    await set(ref(db, "rooms/" + code), {
+      host: uid,
+      status: "waiting",
+      createdAt: Date.now(),
+      players: {
+        [uid]: {
+          pseudo: pseudo
+        }
+      }
+    });
+
+    ecouterSalon(code);
+  } catch (erreur) {
+    console.error(erreur);
+    alert("Erreur lors de la création : " + erreur.message);
+  }
+};
   
 
 let codeActuel = null;
