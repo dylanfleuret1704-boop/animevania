@@ -254,6 +254,22 @@
   <h3>Joueurs connectés</h3>
   <div id="liste-joueurs"></div>
   <p id="statut-salon">En attente des joueurs...</p>
+  
+<button
+  id="bouton-lancer"
+  onclick="lancerPartie()"
+  style="display:none; margin:20px auto; padding:15px 30px; background:#ff2bd6; color:white; border:0; border-radius:12px; font-weight:bold; cursor:pointer;"
+>
+  🚀 LANCER LA PARTIE
+</button>
+</div>
+
+<div id="ecran-jeu" style="display:none; text-align:center; padding:40px;">
+  <h1>⚔️ ANIMEVANIA ⚔️</h1>
+  <h2>La partie commence !</h2>
+  <p>Prépare-toi au combat !</p>
+</div>
+
 </div>
 
 </div>
@@ -305,18 +321,29 @@ import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/fir
   const auth = getAuth(app);
   const db = getDatabase(app);
   
+
+let codeActuel = null;
+
 function ecouterSalon(code) {
+  codeActuel = code;
+
   const salon = document.getElementById("salon-partie");
   const liste = document.getElementById("liste-joueurs");
   const codeSalon = document.getElementById("code-salon");
   const statut = document.getElementById("statut-salon");
+  const bouton = document.getElementById("bouton-lancer");
+  const ecranJeu = document.getElementById("ecran-jeu");
 
   salon.style.display = "block";
+  ecranJeu.style.display = "none";
   codeSalon.textContent = code;
 
-  onValue(ref(db, "rooms/" + code + "/players"), (snapshot) => {
-    const joueurs = snapshot.val() || {};
+  onValue(ref(db, "rooms/" + code), (snapshot) => {
+    const salle = snapshot.val();
 
+    if (!salle) return;
+
+    const joueurs = salle.players || {};
     liste.replaceChildren();
 
     Object.values(joueurs).forEach((joueur) => {
@@ -325,72 +352,34 @@ function ecouterSalon(code) {
       liste.appendChild(element);
     });
 
+    const estHote = auth.currentUser &&
+      salle.host === auth.currentUser.uid;
+
+    bouton.style.display =
+      estHote && salle.status === "waiting" ? "block" : "none";
+
     statut.textContent =
       Object.keys(joueurs).length + " joueur(s) dans la partie";
+
+    if (salle.status === "playing") {
+      salon.style.display = "none";
+      ecranJeu.style.display = "block";
+    }
   });
 }
 
+window.lancerPartie = async function () {
+  if (!codeActuel) return;
 
-  async function connexion() {
-    if (!auth.currentUser) {
-      await signInAnonymously(auth);
-    }
+  try {
+    await set(ref(db, "rooms/" + codeActuel + "/status"), "playing");
+  } catch (erreur) {
+    console.error(erreur);
+    document.getElementById("statut-salon").textContent =
+      "Impossible de lancer la partie : " + erreur.message;
   }
+};
 
-  window.message = function () {
-    document.getElementById("creation-partie").style.display = "block";
-    document.getElementById("creation-partie").scrollIntoView({
-      behavior: "smooth"
-    });
-  };
-
-  window.creerPartie = async function () {
-    const pseudo = document.getElementById("pseudo").value.trim();
-    const message = document.getElementById("message-partie");
-
-    if (!pseudo) {
-      message.textContent = "Entre ton pseudo !";
-      return;
-    }
-
-    try {
-      await connexion();
-
-      const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let code = "";
-
-      do {
-        code = "";
-        for (let i = 0; i < 6; i++) {
-          code += caracteres[Math.floor(Math.random() * caracteres.length)];
-        }
-      } while ((await get(ref(db, "rooms/" + code))).exists());
-
-      const uid = auth.currentUser.uid;
-
-      await set(ref(db, "rooms/" + code), {
-        host: uid,
-        status: "waiting",
-        createdAt: Date.now(),
-        players: {
-          [uid]: {
-            pseudo: pseudo,
-            joinedAt: Date.now()
-          }
-        }
-      });
-      ecouterSalon(code);
-
-      message.innerHTML =
-        "🎉 Partie créée !<br>Ton code est : <strong>" +
-        code +
-        "</strong><br>Donne ce code à ton ami !";
-
-    } catch (erreur) {
-      console.error(erreur);
-      message.textContent = "Erreur : " + erreur.message;
-    }
-  };
 
   window.rejoindrePartie = async function () {
     const pseudo = document.getElementById("pseudo").value.trim();
