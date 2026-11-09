@@ -320,6 +320,16 @@ import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/fir
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
+  window.message = function () {
+  const creation = document.getElementById("creation-partie");
+
+  if (creation) {
+    creation.style.display = "block";
+    creation.scrollIntoView({
+      behavior: "smooth"
+    });
+  }
+};
   
 
 let codeActuel = null;
