@@ -177,6 +177,176 @@
         padding: 75px 20px;
       }
     }
+
+    /* Plateau de duel AnimeVania */
+    .game-screen {
+      display: none;
+      width: min(1500px, 96%);
+      margin: 0 auto;
+      padding: 28px 0 45px;
+      text-align: left;
+    }
+    .game-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .game-eyebrow, .player-caption, .zone-caption {
+      color: #c084fc;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .game-title {
+      color: #ff36cb;
+      font-size: clamp(25px, 4vw, 38px);
+      margin-top: 5px;
+      text-shadow: 0 0 18px #a855f7;
+    }
+    .room-code {
+      color: #c7bdd4;
+      background: #160d24;
+      border: 1px solid #a855f766;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .duel-board {
+      display: grid;
+      gap: 14px;
+      padding: clamp(12px, 2vw, 24px);
+      border: 1px solid #a855f788;
+      border-radius: 20px;
+      background:
+        radial-gradient(ellipse at center, #301342 0%, #170d25 55%, #0d0816 100%);
+      box-shadow: 0 0 35px #a855f722, inset 0 0 35px #00000066;
+    }
+    .player-panel {
+      display: grid;
+      gap: 13px;
+      padding: 16px;
+      border: 1px solid #a855f755;
+      border-radius: 14px;
+      background: #10091dcc;
+    }
+    .opponent-panel { border-top: 3px solid #a855f7; }
+    .own-panel { border-bottom: 3px solid #ff36cb; }
+    .player-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .player-info h2 {
+      margin-top: 5px;
+      font-size: 20px;
+      color: white;
+    }
+    .player-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .player-stats span {
+      padding: 8px 11px;
+      border-radius: 8px;
+      background: #281438;
+      color: #d8c9e8;
+      font-size: 12px;
+    }
+    .player-stats strong { color: white; margin-left: 4px; }
+    .card-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .empty-card-slot {
+      min-height: 105px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border: 1px dashed #a855f788;
+      border-radius: 10px;
+      background: #ffffff08;
+      color: #8e7b9e;
+      font-size: 11px;
+      text-align: center;
+    }
+    .graveyard-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #c7bdd4;
+      font-size: 12px;
+    }
+    .zone-placeholder { color: #766781; font-style: italic; }
+    .shared-zones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .shared-zone {
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid #ff36cb66;
+      border-radius: 12px;
+      background: #24102dcc;
+      text-align: center;
+    }
+    .shared-zone strong { color: white; font-size: 14px; }
+    .verification-zone { border-color: #a855f766; }
+    .board-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .random-zone, .coin-zone {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid #a855f755;
+      border-radius: 10px;
+      background: #10091dcc;
+      color: #d8c9e8;
+      font-size: 12px;
+    }
+    .random-zone .zone-caption, .coin-zone .zone-caption { width: 100%; }
+    .random-zone span:not(.zone-caption) {
+      padding: 7px 9px;
+      border-radius: 7px;
+      background: #281438;
+    }
+    .coin-zone strong { color: white; }
+    .board-note {
+      margin-top: 14px;
+      color: #9d8eaa;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .game-screen { width: 94%; padding-top: 18px; }
+      .game-topbar { align-items: flex-start; flex-direction: column; }
+      .shared-zones { grid-template-columns: 1fr; }
+      .card-row { gap: 6px; }
+      .empty-card-slot { min-height: 75px; font-size: 10px; }
+      .player-panel { padding: 11px; }
+    }
+
   </style>
 </head>
 
@@ -264,16 +434,94 @@
 </button>
 </div>
 
-<div id="ecran-jeu" style="display:none; text-align:center; padding:40px;">
-  <h1>⚔️ ANIMEVANIA ⚔️</h1>
-  <h2>La partie commence !</h2>
-  <p>Prépare-toi au combat !</p>
+<div id="ecran-jeu" class="game-screen" style="display:none;">
+  <div class="game-topbar">
+    <div>
+      <div class="game-eyebrow">DUEL EN COURS</div>
+      <h1 class="game-title">⚔️ ANIMEVANIA ⚔️</h1>
+    </div>
+    <div class="room-code">Salon : <strong id="code-jeu">—</strong></div>
+  </div>
+
+  <section class="duel-board" aria-label="Plateau de jeu AnimeVania">
+    <div class="player-panel opponent-panel">
+      <div class="player-info">
+        <div>
+          <span class="player-caption">JOUEUR 2</span>
+          <h2 id="nom-joueur-2">En attente</h2>
+        </div>
+        <div class="player-stats">
+          <span>Main <strong id="main-joueur-2">0</strong></span>
+          <span>Mystic <strong id="mystic-joueur-2">0</strong></span>
+          <span>PV <strong id="pv-joueur-2">1200</strong></span>
+        </div>
+      </div>
+      <div class="card-row" aria-label="Emplacements de cartes du joueur 2">
+        <div class="empty-card-slot">Emplacement 1</div>
+        <div class="empty-card-slot">Emplacement 2</div>
+        <div class="empty-card-slot">Emplacement 3</div>
+        <div class="empty-card-slot">Emplacement 4</div>
+      </div>
+      <div class="graveyard-line">
+        <span>☠ Cimetière du joueur 2</span>
+        <span class="zone-placeholder">Aucune carte</span>
+      </div>
+    </section>
+
+    <div class="shared-zones">
+      <div class="shared-zone terrain-zone">
+        <span class="zone-caption">ZONE TERRAIN PARTAGÉE</span>
+        <strong id="terrain-actuel">Aucun terrain</strong>
+      </div>
+      <div class="shared-zone verification-zone">
+        <span class="zone-caption">VÉRIFICATION DE CARTE</span>
+        <strong>Aucune carte à vérifier</strong>
+      </div>
+    </div>
+
+    <section class="player-panel own-panel">
+      <div class="graveyard-line">
+        <span>☠ Cimetière du joueur 1</span>
+        <span class="zone-placeholder">Aucune carte</span>
+      </div>
+      <div class="card-row" aria-label="Emplacements de cartes du joueur 1">
+        <div class="empty-card-slot">Emplacement 1</div>
+        <div class="empty-card-slot">Emplacement 2</div>
+        <div class="empty-card-slot">Emplacement 3</div>
+        <div class="empty-card-slot">Emplacement 4</div>
+      </div>
+      <div class="player-info">
+        <div>
+          <span class="player-caption">JOUEUR 1</span>
+          <h2 id="nom-joueur-1">En attente</h2>
+        </div>
+        <div class="player-stats">
+          <span>Main <strong id="main-joueur-1">0</strong></span>
+          <span>Mystic <strong id="mystic-joueur-1">0</strong></span>
+          <span>PV <strong id="pv-joueur-1">1200</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="board-footer">
+      <div class="random-zone">
+        <span class="zone-caption">TIRAGES ALÉATOIRES</span>
+        <span>1/2</span><span>1/3</span><span>1/4</span>
+        <span>1/5</span><span>1/6</span><span>1/8</span>
+      </div>
+      <div class="coin-zone">
+        <span class="zone-caption">PILE OU FACE</span>
+        <strong>En attente</strong>
+      </div>
+    </div>
+  </section>
+  <p class="board-note">Le plateau est installé. Les actions de jeu (pioche, invocations, effets et attaques) seront programmées dans les prochaines étapes.</p>
 </div>
 
 </div>
 
 </div>
-n>
+
 </div>
     <section class="games" id="jeux">
       <h2>TON UNIVERS <span>DE JEU</span></h2>
@@ -374,8 +622,10 @@ function ecouterSalon(code) {
   const statut = document.getElementById("statut-salon");
   const bouton = document.getElementById("bouton-lancer");
   const ecranJeu = document.getElementById("ecran-jeu");
+  const codeJeu = document.getElementById("code-jeu");
 
   salon.style.display = "block";
+  if (codeJeu) codeJeu.textContent = code;
   ecranJeu.style.display = "none";
   codeSalon.textContent = code;
 
@@ -387,11 +637,17 @@ function ecouterSalon(code) {
     const joueurs = salle.players || {};
     liste.replaceChildren();
 
-    Object.values(joueurs).forEach((joueur) => {
+    const joueursListe = Object.values(joueurs);
+    joueursListe.forEach((joueur) => {
       const element = document.createElement("p");
       element.textContent = "🎮 " + joueur.pseudo;
       liste.appendChild(element);
     });
+
+    const nomJoueur1 = document.getElementById("nom-joueur-1");
+    const nomJoueur2 = document.getElementById("nom-joueur-2");
+    if (nomJoueur1) nomJoueur1.textContent = joueursListe[0]?.pseudo || "En attente";
+    if (nomJoueur2) nomJoueur2.textContent = joueursListe[1]?.pseudo || "En attente";
 
     const estHote = auth.currentUser &&
       salle.host === auth.currentUser.uid;
@@ -433,7 +689,7 @@ window.lancerPartie = async function () {
     }
 
     try {
-      await connexion();
+      await signInAnonymously(auth);
 
       const salleRef = ref(db, "rooms/" + code);
       const resultat = await get(salleRef);
@@ -459,10 +715,10 @@ window.lancerPartie = async function () {
     }
   };
 
-  connexion().catch(console.error);
-</script>
+  // Compatibilité avec les anciens boutons/scripts qui appellent connexion()
+  window.connexion = window.rejoindrePartie;
 
-  </script>
+</script>
 
 </body>
 </html>
